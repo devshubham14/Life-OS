@@ -1,0 +1,53 @@
+import "@testing-library/jest-dom/vitest";
+
+let store: Record<string, string> = {};
+const storageMock = {
+  getItem: (key: string) => store[key] ?? null,
+  setItem: (key: string, value: string) => {
+    store[key] = String(value);
+  },
+  removeItem: (key: string) => {
+    delete store[key];
+  },
+  clear: () => {
+    store = {};
+  },
+  get length() {
+    return Object.keys(store).length;
+  },
+  key: (index: number) => Object.keys(store)[index] ?? null,
+};
+
+Object.defineProperty(window, "localStorage", {
+  value: storageMock,
+  writable: true,
+});
+Object.defineProperty(globalThis, "localStorage", {
+  value: storageMock,
+  writable: true,
+});
+
+globalThis.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
+Object.defineProperty(window, "scrollTo", {
+  writable: true,
+  value: () => {},
+});
+
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: (query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => {},
+  }),
+});
